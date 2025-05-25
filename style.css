@@ -543,34 +543,41 @@
     margin-left: 4px !important;
   }
   #music-volume-container {
-    left: 8px !important;
-    right: 8px !important;
+    left: 4px !important;
+    right: 4px !important;
     width: auto !important;
     min-width: 0 !important;
-    max-width: 95vw !important;
-    bottom: 60px !important;
+    max-width: 98vw !important;
+    bottom: 30px !important;
     transform: none !important;
     flex-wrap: wrap;
-    gap: 2px !important;
-    padding: 2px 3px !important;
-    height: 28px !important;
-    font-size: 10px !important;
+    gap: 1px !important;
+    padding: 1px 1px !important;
+    height: 16px !important;
+    font-size: 7px !important;
   }
   #music-volume-container span {
-    font-size: 10px !important;
+    font-size: 7px !important;
   }
   #music-volume {
-    width: 40px !important;
-    height: 16px !important;
+    width: 20px !important;
+    height: 8px !important;
     min-width: 0 !important;
-    max-width: 60px !important;
+    max-width: 30px !important;
   }
   #music-select {
-    font-size: 10px !important;
-    padding: 1px 3px !important;
-    border-radius: 4px !important;
-    height: 18px !important;
+    font-size: 7px !important;
+    padding: 0 1px !important;
+    border-radius: 2px !important;
+    height: 10px !important;
     min-width: 0 !important;
-    max-width: 60px !important;
+    max-width: 30px !important;
+  }
+  #promo-open-btn {
+    font-size: 7px !important;
+    padding: 2px 4px !important;
+    border-radius: 3px !important;
+    height: 10px !important;
+    margin-left: 2px !important;
   }
 }
