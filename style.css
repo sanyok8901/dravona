@@ -7,11 +7,19 @@
       background-size: cover;
       min-height: 100vh;
       padding-bottom: 120px !important;
+      color: #222;
+    }
+    body::before {
+      display: none !important;
+    }
+    #score-counter, #promo-open-btn, .game-section, #game-area, #catch-button-area, #tetris-area, #memory-area, #kosmo-area, #kazino2-area, #shop-area {
+      position: relative;
+      z-index: 1;
     }
     .header-text {
       font-size: 48px;
       font-weight: bold;
-      color: #1E90FF; /* синий */
+      color: #ff9800;
       margin-bottom: 20px;
     }
     .game-section {
@@ -42,28 +50,29 @@
       font-size: 16px;
       border-radius: 8px;
       border: none;
-      background: #1E90FF;
-      color: #fff;
+      background: #222 !important;
+      color: #ff9800 !important;
       box-shadow: 0 2px 8px rgba(30,144,255,0.1);
       transition: background 0.2s, transform 0.2s;
       cursor: pointer;
     }
     button:hover, button:focus {
-      background: #1565c0;
+      background: #333 !important;
       transform: scale(1.05);
     }
     .back-btn {
       margin-top: 20px;
-      background: #ff7043;
-      color: #fff;
+      background: #222 !important;
+      color: #ff9800 !important;
       font-size: 15px;
       padding: 8px 18px;
       border-radius: 8px;
-      border: none;
+      border: 1px solid #444 !important;
       transition: background 0.2s, transform 0.2s;
     }
     .back-btn:hover, .back-btn:focus {
-      background: #bf360c;
+      background: #333 !important;
+      color: #fff !important;
       transform: scale(1.05);
     }
     .board {
@@ -196,11 +205,12 @@
 #catch-button-area, #tetris-area {
   margin: 0 auto;
   max-width: 350px;
-  background: rgba(255,255,255,0.92);
+  background: rgba(30,30,47,0.98) !important;
   border-radius: 16px;
   box-shadow: 0 4px 24px rgba(30,144,255,0.10);
   padding: 24px 10px 30px 10px;
   position: relative;
+  color: #f5f5f5 !important;
 }
 #catch-btn, #catch-startBtn {
   font-size: 18px;
@@ -402,4 +412,80 @@
   #kosmo-gameArea { width: 220px; height: 340px; }
   #kosmo-rocket { width: 32px; height: 32px; font-size: 28px; }
   .kosmo-meteor { width: 28px; height: 28px; }
+}
+
+/* --- Стили для секции казино (kazino2-area, слот-барабан, баланс и кнопки) --- */
+#kazino2-area {
+  margin: 0 auto;
+  max-width: 350px;
+  background: rgba(30,30,47,0.98);
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(30,144,255,0.10);
+  padding: 24px 10px 30px 10px;
+  position: relative;
+  text-align: center;
+  color: #fff;
+}
+#kazino2-area .balance {
+  margin-bottom: 10px;
+  font-size: 20px;
+}
+#kazino2-area .slot-container {
+  position: relative;
+  width: 300px;
+  height: 100px;
+  overflow: hidden;
+  border: 4px solid #fff;
+  border-radius: 10px;
+  background: #2c2f4a;
+  margin: 0 auto 20px auto;
+}
+#kazino2-area .slot-strip {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  font-size: 40px;
+  will-change: transform;
+  transition: transform 5s cubic-bezier(0.33, 1, 0.68, 1);
+}
+#kazino2-area .slot-item {
+  width: 100px;
+  height: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #444;
+  box-sizing: border-box;
+  user-select: none;
+  color: #ffd700;
+  font-weight: bold;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+#kazino2-area .emoji {
+  font-size: 36px;
+  margin-bottom: 5px;
+}
+#kazino2-area .indicator {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 4px;
+  background: red;
+  transform: translateX(-50%);
+  z-index: 10;
+  border-radius: 2px;
+}
+#kazino2-spinBtn {
+  margin-top: 30px;
+  padding: 10px 20px;
+  font-size: 16px;
+  background: #ff4757;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  user-select: none;
 }
