@@ -413,13 +413,18 @@ document.addEventListener('DOMContentLoaded', function() {
       if (!code) return;
       const promo = DRAVCOIN_PROMOS[code];
       if (promo) {
-        const usedCount = getPromoUsedCount(code);
-        if (usedCount >= promo.limit) {
-          alert('Лимит активаций этого промокода исчерпан!');
+        if (isPromoUsedByUser(code)) {
+          alert('Вы уже активировали этот промокод!');
         } else {
-          addScore(promo.reward);
-          markPromoUsedCount(code);
-          alert(`Промокод активирован! Вы получили ${promo.reward} монет.`);
+          const usedCount = getPromoUsedCount(code);
+          if (usedCount >= promo.limit) {
+            alert('Лимит активаций этого промокода исчерпан!');
+          } else {
+            addScore(promo.reward);
+            markPromoUsedCount(code);
+            markPromoUsedByUser(code);
+            alert(`Промокод активирован! Вы получили ${promo.reward} монет.`);
+          }
         }
       } else {
         alert('Промокод не найден или недействителен!');
@@ -1076,4 +1081,14 @@ function markPromoUsedCount(code) {
   const used = JSON.parse(localStorage.getItem('dravcoin_promos_used_count') || '{}');
   used[code] = (used[code] || 0) + 1;
   localStorage.setItem('dravcoin_promos_used_count', JSON.stringify(used));
+}
+
+function isPromoUsedByUser(code) {
+  const used = JSON.parse(localStorage.getItem('dravcoin_promos_used_by_user') || '[]');
+  return used.includes(code);
+}
+function markPromoUsedByUser(code) {
+  const used = JSON.parse(localStorage.getItem('dravcoin_promos_used_by_user') || '[]');
+  used.push(code);
+  localStorage.setItem('dravcoin_promos_used_by_user', JSON.stringify(used));
 }
