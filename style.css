@@ -536,9 +536,11 @@
     left: unset !important;
     margin: 0 !important;
     z-index: 2002;
-    font-size: 15px !important;
-    padding: 8px 14px !important;
-    border-radius: 10px !important;
+    font-size: 10px !important;
+    padding: 4px 8px !important;
+    border-radius: 6px !important;
+    height: 20px !important;
+    margin-left: 4px !important;
   }
   #music-volume-container {
     left: 8px !important;
@@ -549,7 +551,26 @@
     bottom: 60px !important;
     transform: none !important;
     flex-wrap: wrap;
-    gap: 4px;
-    padding: 4px 6px !important;
+    gap: 2px !important;
+    padding: 2px 3px !important;
+    height: 28px !important;
+    font-size: 10px !important;
+  }
+  #music-volume-container span {
+    font-size: 10px !important;
+  }
+  #music-volume {
+    width: 40px !important;
+    height: 16px !important;
+    min-width: 0 !important;
+    max-width: 60px !important;
+  }
+  #music-select {
+    font-size: 10px !important;
+    padding: 1px 3px !important;
+    border-radius: 4px !important;
+    height: 18px !important;
+    min-width: 0 !important;
+    max-width: 60px !important;
   }
 }
