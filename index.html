@@ -23,15 +23,6 @@
   <h1>Выбери игру</h1>
 
   <div id="score-counter" style="position:fixed;left:50%;top:20px;transform:translateX(-50%);z-index:2001;background:rgba(255,255,255,0.95);border-radius:12px;padding:8px 24px;font-size:22px;font-weight:bold;color:#ff9800;box-shadow:0 2px 8px rgba(30,144,255,0.10);">DravCoin: 0</div>
-  <button id="promo-open-btn" style="position:fixed;top:20px;right:24px;z-index:2002;background:#ff9800;color:#fff;font-size:18px;padding:10px 22px;border-radius:12px;box-shadow:0 2px 8px rgba(67,160,71,0.15);border:none;cursor:pointer;">🎁 Ввести промокод</button>
-  <div id="promo-modal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.45);z-index:3000;justify-content:center;align-items:center;">
-    <div style="background:#fff;color:#222;padding:32px 24px;border-radius:16px;box-shadow:0 4px 24px rgba(30,144,255,0.15);min-width:320px;max-width:90vw;position:relative;">
-      <button id="promo-modal-close" style="position:absolute;top:8px;right:12px;font-size:22px;background:none;border:none;color:#888;cursor:pointer;">×</button>
-      <h3 style="margin-bottom:18px;">Активация промокода</h3>
-      <input id="promo-input" type="text" placeholder="Введите промокод" style="width:100%;font-size:18px;padding:8px 12px;border-radius:8px;border:1px solid #888;margin-bottom:12px;">
-      <button id="promo-activate-btn" style="font-size:18px;padding:8px 18px;border-radius:8px;width:100%;background:#ff9800;color:#fff;border:none;">Активировать</button>
-    </div>
-  </div>
 
   <div class="game-section">
     <button onclick="startTicTacToe()">1. Крестики-нолики</button>
@@ -122,6 +113,7 @@
       <option value="music2.mp3">Музыка 2</option>
       <option value="music3.mp3">Музыка 3</option>
     </select>
+    <button id="promo-open-btn" style="margin-left:18px;background:#ff9800;color:#fff;font-size:18px;padding:10px 22px;border-radius:12px;box-shadow:0 2px 8px rgba(67,160,71,0.15);border:none;cursor:pointer;">🎁 Ввести промокод</button>
   </div>
   <audio id="bg-music" src="music.mp3" autoplay loop hidden></audio>
 
@@ -143,6 +135,16 @@
       <div id="casino-promo-code" style="font-size:20px;margin-bottom:18px;"></div>
       <button id="casino-promo-sell" style="font-size:18px;padding:8px 18px;border-radius:8px;background:#ff9800;color:#fff;border:none;margin-right:12px;">Продать за 600 DravCoin</button>
       <button id="casino-promo-keep" style="font-size:18px;padding:8px 18px;border-radius:8px;background:#43a047;color:#fff;border:none;">Оставить себе</button>
+    </div>
+  </div>
+
+  <!-- Переместить модалку promo-modal вниз, чтобы она не мешала -->
+  <div id="promo-modal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.45);z-index:3000;justify-content:center;align-items:center;">
+    <div style="background:#fff;color:#222;padding:32px 24px;border-radius:16px;box-shadow:0 4px 24px rgba(30,144,255,0.15);min-width:320px;max-width:90vw;position:relative;">
+      <button id="promo-modal-close" style="position:absolute;top:8px;right:12px;font-size:22px;background:none;border:none;color:#888;cursor:pointer;">×</button>
+      <h3 style="margin-bottom:18px;">Активация промокода</h3>
+      <input id="promo-input" type="text" placeholder="Введите промокод" style="width:100%;font-size:18px;padding:8px 12px;border-radius:8px;border:1px solid #888;margin-bottom:12px;">
+      <button id="promo-activate-btn" style="font-size:18px;padding:8px 18px;border-radius:8px;width:100%;background:#ff9800;color:#fff;border:none;">Активировать</button>
     </div>
   </div>
 
