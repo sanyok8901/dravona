@@ -1,8 +1,33 @@
+// --- ПРОМОКОДЫ ДЛЯ КАЗИНО ---
+const DRAVONA_PROMOCODES = [
+  'DRVN-7Q2K9L1A','DRVN-4X8J2M5B','DRVN-9W3E6T7C','DRVN-2A5S8D9F','DRVN-6Z1X4C7V','DRVN-3B7N2M8Q','DRVN-5L9K1J4H','DRVN-8G2F5D6S','DRVN-1P4O7I3U','DRVN-7Y2T5R8E',
+  'DRVN-4W9Q1A6S','DRVN-2D5F8G3H','DRVN-6J1K4L7Z','DRVN-3X7C2V5B','DRVN-5N8M1Q4W','DRVN-9E2R5T6Y','DRVN-1U4I7O3P','DRVN-7S2D5F8G','DRVN-4H9J1K6L','DRVN-2Z5X8C3V',
+  'DRVN-AB12CD34','DRVN-EF56GH78','DRVN-IJ90KL12','DRVN-MN34OP56','DRVN-QR78ST90','DRVN-UV12WX34','DRVN-YZ56AB78','DRVN-CD90EF12','DRVN-GH34IJ56','DRVN-KL78MN90',
+];
+
+// --- ПРОМОКОДЫ НА МОНЕТЫ ---
+const DRAVCOIN_PROMOS = {
+
+  // Новые коды:
+  'OSSSIX': {reward: 50000, limit: 5},
+  'OPEN': {reward: 50, limit: 100},
+  'BZINIGUZ': {reward: 100, limit: 2},
+  'SDIAD': {reward: 150, limit: 1},
+  'CIARJ': {reward: 150, limit: 1},
+  'ORGKW': {reward: 150, limit: 1},
+  'JEFBW': {reward: 150, limit: 1},
+  'CIUTS': {reward: 150, limit: 3},
+  'CKELE': {reward: 50, limit: 5},
+  'LILTIL': {reward: 100, limit: 5},
+  'TEST': {reward: 10, limit: 500},
+  'FCDK': {reward: 50, limit: 50},
+  'Love_HILEL': {reward: 150, limit: 2},
+};
+
 function showMenu() {
   document.getElementById('game-area').innerHTML = '';
   document.querySelector('.game-section').style.display = '';
   document.onkeydown = null;
-  removeMemoryGameIfExtra();
 }
 
 function addBackButton() {
@@ -17,41 +42,41 @@ function addBackButton() {
 
 function startTicTacToe() {
   document.querySelector('.game-section').style.display = 'none';
-  const area = document.getElementById("game-area");
-  area.innerHTML = '<h2>Крестики-нолики</h2><div class="board" id="board"></div><p id="status"></p>';
-  const board = document.getElementById("board");
-  const status = document.getElementById("status");
-  let cells = Array(9).fill('');
-  let gameOver = false;
+    const area = document.getElementById("game-area");
+    area.innerHTML = '<h2>Крестики-нолики</h2><div class="board" id="board"></div><p id="status"></p>';
+    const board = document.getElementById("board");
+    const status = document.getElementById("status");
+    let cells = Array(9).fill('');
+    let gameOver = false;
 
-  function renderBoard() {
-    board.innerHTML = '';
-    cells.forEach((val, i) => {
-      const btn = document.createElement("button");
-      btn.className = 'cell';
-      btn.innerText = val;
-      btn.disabled = val || gameOver;
-      btn.onclick = () => {
-        if (!val && !gameOver) {
-          cells[i] = 'X';
-          botMove();
-          checkGame();
-          renderBoard();
-        }
-      };
-      board.appendChild(btn);
-    });
-  }
-
-  function botMove() {
-    const winCombos = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-    // 1. Попытка выиграть
-    for (let combo of winCombos) {
-      let [a,b,c] = combo;
-      if (cells[a] === 'O' && cells[b] === 'O' && !cells[c]) { cells[c] = 'O'; return; }
-      if (cells[a] === 'O' && cells[c] === 'O' && !cells[b]) { cells[b] = 'O'; return; }
-      if (cells[b] === 'O' && cells[c] === 'O' && !cells[a]) { cells[a] = 'O'; return; }
+    function renderBoard() {
+      board.innerHTML = '';
+      cells.forEach((val, i) => {
+        const btn = document.createElement("button");
+        btn.className = 'cell';
+        btn.innerText = val;
+        btn.disabled = val || gameOver;
+        btn.onclick = () => {
+          if (!val && !gameOver) {
+            cells[i] = 'X';
+            botMove();
+            checkGame();
+            renderBoard();
+          }
+        };
+        board.appendChild(btn);
+      });
     }
+
+    function botMove() {
+      const winCombos = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+    // 1. Попытка выиграть
+      for (let combo of winCombos) {
+        let [a,b,c] = combo;
+        if (cells[a] === 'O' && cells[b] === 'O' && !cells[c]) { cells[c] = 'O'; return; }
+        if (cells[a] === 'O' && cells[c] === 'O' && !cells[b]) { cells[b] = 'O'; return; }
+        if (cells[b] === 'O' && cells[c] === 'O' && !cells[a]) { cells[a] = 'O'; return; }
+      }
     // 2. Блокировка игрока
     for (let combo of winCombos) {
       let [a,b,c] = combo;
@@ -69,28 +94,28 @@ function startTicTacToe() {
       return;
     }
     // 5. Любая свободная
-    let empty = cells.map((v,i) => v === '' ? i : null).filter(i => i !== null);
-    if (empty.length) {
-      const rand = empty[Math.floor(Math.random() * empty.length)];
-      cells[rand] = 'O';
+      let empty = cells.map((v,i) => v === '' ? i : null).filter(i => i !== null);
+      if (empty.length) {
+        const rand = empty[Math.floor(Math.random() * empty.length)];
+        cells[rand] = 'O';
+      }
     }
-  }
 
-  function checkGame() {
-    const win = (sym) => [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]]
-      .some(([a,b,c]) => cells[a] === sym && cells[b] === sym && cells[c] === sym);
-    if (win('X')) { status.innerText = "Ты победил!"; gameOver = true; }
-    else if (win('O')) { status.innerText = "Ты проиграл!"; gameOver = true; }
-    else if (!cells.includes('')) { status.innerText = "Ничья."; gameOver = true; }
-  }
+    function checkGame() {
+      const win = (sym) => [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]]
+        .some(([a,b,c]) => cells[a] === sym && cells[b] === sym && cells[c] === sym);
+      if (win('X')) { status.innerText = "Ты победил!"; gameOver = true; }
+      else if (win('O')) { status.innerText = "Ты проиграл!"; gameOver = true; }
+      else if (!cells.includes('')) { status.innerText = "Ничья."; gameOver = true; }
+    }
 
-  renderBoard();
+    renderBoard();
   addBackButton();
-}
+  }
 
-function startBombGame() {
+  function startBombGame() {
   document.querySelector('.game-section').style.display = 'none';
-  const area = document.getElementById("game-area");
+    const area = document.getElementById("game-area");
   function renderBoxes() {
     area.innerHTML = '<h2>Не попади на бомбу</h2><div id="boxes-row" style="font-size:48px;margin:20px 0;">📦 📦 📦</div>';
     const correct = Math.floor(Math.random() * 3);
@@ -119,119 +144,32 @@ function startBombGame() {
     addBackButton();
   }
   renderBoxes();
-}
+  }
 
-function startGuessNumber() {
+  function startGuessNumber() {
   document.querySelector('.game-section').style.display = 'none';
-  const area = document.getElementById("game-area");
-  const number = Math.floor(Math.random() * 10) + 1;
+    const area = document.getElementById("game-area");
+    const number = Math.floor(Math.random() * 10) + 1;
   area.innerHTML = `<h2>Угадай число от 1 до 10</h2><input id='guess' type='number' min='1' max='10'><button id='guess-btn'>Проверить</button><p id='result'></p>`;
   document.getElementById('guess-btn').onclick = function () {
     const guess = parseInt(document.getElementById('guess').value);
-    if (guess === number) { document.getElementById('result').innerText = 'Правильно!'; }
-    else { document.getElementById('result').innerText = 'Неправильно! Было: ' + number; }
+    if (guess === number) {
+      document.getElementById('result').innerText = 'Правильно!';
+    } else {
+      document.getElementById('result').innerText = 'Неправильно! Было: ' + number;
+    }
   };
   addBackButton();
-}
-
-function startRoulette() {
-  document.querySelector('.game-section').style.display = 'none';
-  const area = document.getElementById("game-area");
-  area.innerHTML = `<h2>Рулетка</h2><canvas id='roulette-canvas' width='320' height='320'></canvas><br><button id='spin-btn'>Крутить</button>`;
-
-  const outcomes = [
-    {text: "-3 очка", score: -3, color: '#e53935'},
-    {text: "-2 очка", score: -2, color: '#fb8c00'},
-    {text: "-1 очко", score: -1, color: '#fbc02d'},
-    {text: "0 очков", score: 0, color: '#bdbdbd'},
-    {text: "+1 очко", score: 1, color: '#43a047'},
-    {text: "+2 очка", score: 2, color: '#1e88e5'},
-    {text: "+3 очка", score: 3, color: '#8e24aa'}
-  ];
-  const canvas = document.getElementById('roulette-canvas');
-  const ctx = canvas.getContext('2d');
-  const center = 160;
-  const radius = 140;
-  const sectorAngle = 2 * Math.PI / outcomes.length;
-  let angle = 0;
-  let spinning = false;
-
-  function drawWheel(highlightIdx = null) {
-    ctx.clearRect(0, 0, 320, 320);
-    for (let i = 0; i < outcomes.length; i++) {
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(center, center);
-      ctx.arc(center, center, radius, angle + i * sectorAngle, angle + (i + 1) * sectorAngle);
-      ctx.closePath();
-      ctx.fillStyle = outcomes[i].color;
-      ctx.globalAlpha = (highlightIdx === i) ? 0.85 : 0.7;
-      ctx.fill();
-      ctx.globalAlpha = 1;
-      ctx.strokeStyle = '#fff';
-      ctx.lineWidth = 3;
-      ctx.stroke();
-      ctx.restore();
-      // Текст
-      ctx.save();
-      ctx.translate(center, center);
-      ctx.rotate(angle + (i + 0.5) * sectorAngle);
-      ctx.textAlign = 'right';
-      ctx.font = 'bold 13px Arial';
-      ctx.fillStyle = '#222';
-      wrapText(ctx, outcomes[i].text, radius - 12, 0, 60, 13);
-      ctx.restore();
-    }
-    // Стрелка
-    ctx.save();
-    ctx.beginPath();
-    ctx.moveTo(center, center - radius - 10);
-    ctx.lineTo(center - 15, center - radius + 20);
-    ctx.lineTo(center + 15, center - radius + 20);
-    ctx.closePath();
-    ctx.fillStyle = '#FF7043';
-    ctx.fill();
-    ctx.restore();
   }
 
-  drawWheel();
-
-  document.getElementById('spin-btn').onclick = function() {
-    if (spinning) return;
-    spinning = true;
-    let spinAngle = Math.random() * 4 * Math.PI + 6 * Math.PI; // 3-5 оборотов
-    let start = null;
-    let lastAngle = angle;
-    function animate(ts) {
-      if (!start) start = ts;
-      let elapsed = ts - start;
-      let progress = Math.min(elapsed / 3000, 1); // 3 секунды
-      // easeOutCubic
-      let eased = 1 - Math.pow(1 - progress, 3);
-      angle = lastAngle + spinAngle * eased;
-      drawWheel();
-      if (progress < 1) {
-        requestAnimationFrame(animate);
-      } else {
-        angle = angle % (2 * Math.PI);
-        let idx = Math.floor(((2 * Math.PI - angle + sectorAngle / 2) % (2 * Math.PI)) / sectorAngle);
-        drawWheel(idx);
-        spinning = false;
-      }
-    }
-    requestAnimationFrame(animate);
-  };
-  addBackButton();
-}
-
-function startMathQuiz() {
+  function startMathQuiz() {
   document.querySelector('.game-section').style.display = 'none';
-  const area = document.getElementById("game-area");
-  const a = Math.floor(Math.random() * 10);
-  const b = Math.floor(Math.random() * 10);
+    const area = document.getElementById("game-area");
+    const a = Math.floor(Math.random() * 10);
+    const b = Math.floor(Math.random() * 10);
   area.innerHTML = `<h2>Сколько будет ${a} × ${b}?</h2><input id='answer' type='number'><button onclick='checkMath()'>Ответить</button><p id='math-result'></p>`;
-  window.checkMath = function () {
-    const ans = parseInt(document.getElementById('answer').value);
+    window.checkMath = function () {
+      const ans = parseInt(document.getElementById('answer').value);
     if (ans === (a * b)) { document.getElementById('math-result').innerText = 'Верно!'; }
     else { document.getElementById('math-result').innerText = 'Неверно!'; }
   }
@@ -252,9 +190,10 @@ function startButtonGame() {
       timer = setTimeout(() => {
         btn.disabled = false;
         document.getElementById('btn-result').innerText = `Время вышло! Клики: ${clicks}`;
+        if (clicks >= 100) addScore(2);
         started = false;
         clicks = 0;
-      }, 3000);
+      }, 60000);
     }
     clicks++;
     btn.innerText = `Клики: ${clicks}`;
@@ -336,6 +275,7 @@ function startTetris() {
     if(lines) {
       score+=lines*10;
       document.getElementById('tetris-score').innerText = `Очки: ${score}`;
+      addScore(lines);
     }
   }
 
@@ -392,26 +332,108 @@ function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
   ctx.fillText(line, x, y);
 }
 
-// Инициализация
-window.onload = function() {
-  // Автозапуск музыки
+// --- DOMContentLoaded: инициализация и обработчики ---
+document.addEventListener('DOMContentLoaded', function() {
+  updateScoreCounter();
+  // --- Музыка: выбор трека ---
   const music = document.getElementById('bg-music');
+  const musicSelect = document.getElementById('music-select');
   const volumeSlider = document.getElementById('music-volume');
-  if (music) {
-    music.volume = volumeSlider ? parseFloat(volumeSlider.value) : 0.5;
-    music.play().catch(()=>{});
-    document.body.addEventListener('click', function oncePlay() {
-      music.play().catch(()=>{});
-      document.body.removeEventListener('click', oncePlay);
-    });
-    if (volumeSlider) {
-      volumeSlider.addEventListener('input', function() {
-        music.volume = parseFloat(this.value);
-      });
+  // Восстановить выбор трека
+  if (musicSelect && music) {
+    const savedTrack = localStorage.getItem('dravon_music_track');
+    if (savedTrack && Array.from(musicSelect.options).some(opt => opt.value === savedTrack)) {
+      music.src = savedTrack;
+      musicSelect.value = savedTrack;
     }
+    musicSelect.onchange = function() {
+      music.src = this.value;
+      localStorage.setItem('dravon_music_track', this.value);
+      // применить текущую громкость
+      if (volumeSlider) music.volume = parseFloat(volumeSlider.value);
+      music.play().catch(()=>{});
+    };
+  }
+  // --- Громкость ---
+  if (volumeSlider && music) {
+    // Восстановить громкость
+    const savedVol = localStorage.getItem('dravon_music_volume');
+    if (savedVol !== null) {
+      volumeSlider.value = savedVol;
+      music.volume = parseFloat(savedVol);
+    } else {
+      music.volume = parseFloat(volumeSlider.value);
+    }
+    volumeSlider.oninput = function() {
+      music.volume = parseFloat(this.value);
+      localStorage.setItem('dravon_music_volume', this.value);
+    };
   }
   showMenu();
-};
+  // --- Магазин ---
+  const shopBtn = document.getElementById('shop-btn');
+  const shopArea = document.getElementById('shop-area');
+  const gameSection = document.querySelector('.game-section');
+  const shopPromo = document.getElementById('shop-promo');
+  const shopBack = document.getElementById('shop-back');
+  if (shopBtn && shopArea && gameSection) {
+    shopBtn.onclick = function() {
+      gameSection.style.display = 'none';
+      document.getElementById('game-area').style.display = 'none';
+      shopArea.style.display = '';
+      shopPromo.textContent = '';
+    };
+    shopBack.onclick = function() {
+      shopArea.style.display = 'none';
+      gameSection.style.display = '';
+      document.getElementById('game-area').style.display = '';
+      showMenu();
+    };
+  }
+  // --- Модальное окно для промокода ---
+  const promoOpenBtn = document.getElementById('promo-open-btn');
+  const promoModal = document.getElementById('promo-modal');
+  const promoModalClose = document.getElementById('promo-modal-close');
+  const promoInput = document.getElementById('promo-input');
+  const promoBtn = document.getElementById('promo-activate-btn');
+  if (promoOpenBtn && promoModal && promoModalClose) {
+    promoOpenBtn.onclick = function() {
+      promoModal.style.display = 'flex';
+      promoInput.value = '';
+      promoInput.focus();
+    };
+    promoModalClose.onclick = function() {
+      promoModal.style.display = 'none';
+    };
+    promoModal.onclick = function(e) {
+      if (e.target === promoModal) promoModal.style.display = 'none';
+    };
+  }
+  if (promoInput && promoBtn) {
+    promoBtn.onclick = function() {
+      const code = promoInput.value.trim().toUpperCase();
+      if (!code) return;
+      const promo = DRAVCOIN_PROMOS[code];
+      if (promo) {
+        const usedCount = getPromoUsedCount(code);
+        if (usedCount >= promo.limit) {
+          alert('Лимит активаций этого промокода исчерпан!');
+        } else {
+          addScore(promo.reward);
+          markPromoUsedCount(code);
+          alert(`Промокод активирован! Вы получили ${promo.reward} монет.`);
+        }
+      } else {
+        alert('Промокод не найден или недействителен!');
+      }
+      promoInput.value = '';
+      promoModal.style.display = 'none';
+    };
+    promoInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') promoBtn.click();
+    });
+  }
+});
 
 // --- Поймай кнопку ---
 function startCatchButtonGame() {
@@ -566,6 +588,7 @@ function startTetrisMain() {
     };
   }
   const player = { matrix: null, pos: {x:0, y:0}, score: 0 };
+  let lastRewardScore = 0;
   function playerReset() {
     const pieces = 'TJLOSZI';
     player.matrix = createPiece(pieces[Math.floor(Math.random() * pieces.length)]).matrix;
@@ -574,6 +597,7 @@ function startTetrisMain() {
     if(collide(grid, player)) {
       grid.forEach(row => row.fill(0));
       player.score = 0;
+      lastRewardScore = 0;
       updateScore();
     }
   }
@@ -586,6 +610,11 @@ function startTetrisMain() {
       if(linesCleared > 0) {
         player.score += linesCleared * 10;
         updateScore();
+        // --- награда за каждые 10 очков ---
+        while (player.score - lastRewardScore >= 10) {
+          addScore(2);
+          lastRewardScore += 10;
+        }
       }
       playerReset();
     }
@@ -639,8 +668,6 @@ function startTetrisMain() {
   document.getElementById('tetris-down').onclick = function() { if(running) playerDrop(); };
   document.getElementById('tetris-rotate').onclick = function() { if(running) playerRotate(1); };
   playerReset();
-  updateScore();
-  running = true;
   update();
   document.getElementById('tetris-back').onclick = function() {
     stopGame();
@@ -706,6 +733,7 @@ function startMemoryGame() {
       matchedCards++;
       if (matchedCards === 8) {
         gameOver.classList.add('active');
+        addScore(2);
       }
     } else {
       card1.classList.remove('flipped');
@@ -733,24 +761,6 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelector('.game-section').appendChild(memoryBtn);
 });
 
-// Автоматическое удаление игры на память, если в меню больше 9 игр
-function removeMemoryGameIfExtra() {
-  const menu = document.querySelector('.game-section');
-  const memoryBtn = Array.from(menu.children).find(btn => btn.innerText.includes('Игра на память'));
-  if (menu.children.length > 9 && memoryBtn) {
-    memoryBtn.remove();
-    const memArea = document.getElementById('memory-area');
-    if (memArea) memArea.remove();
-  }
-}
-
-// Проверять при каждом открытии меню
-const origShowMenu = showMenu;
-showMenu = function() {
-  origShowMenu();
-  removeMemoryGameIfExtra();
-};
-
 // --- Глобальный обработчик для всех кнопок 'Назад в меню' ---
 document.addEventListener('click', function(e) {
   if (e.target.classList && e.target.classList.contains('back-btn')) {
@@ -769,13 +779,21 @@ function startKosmoGame() {
   const rightBtn = document.getElementById('kosmo-right');
   const gameoverDiv = document.getElementById('kosmo-gameover');
   const backBtn = document.getElementById('kosmo-back');
+  const timerDisplay = document.getElementById('kosmo-timer');
   let rocketX = (gameArea.offsetWidth - rocket.offsetWidth) / 2;
   let rocketY = gameArea.offsetHeight - rocket.offsetHeight - 10;
   let meteors = [];
   let meteorInterval = null;
   let moveInterval = null;
   let gameRunning = true;
-
+  let kosmoTimer = 0;
+  let kosmoRewardTimer = null;
+  let kosmoTimerInterval = null;
+  function formatTime(sec) {
+    const m = Math.floor(sec / 60).toString().padStart(2, '0');
+    const s = (sec % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
+  }
   function resetGame() {
     document.querySelector('.game-section').style.display = 'none';
     meteors.forEach(m => m.el.remove());
@@ -785,15 +803,29 @@ function startKosmoGame() {
     rocket.style.bottom = '30px';
     gameoverDiv.style.display = 'none';
     gameRunning = true;
+    kosmoTimer = 0;
+    timerDisplay.textContent = formatTime(kosmoTimer);
+    if (kosmoRewardTimer) clearInterval(kosmoRewardTimer);
+    if (kosmoTimerInterval) clearInterval(kosmoTimerInterval);
+    kosmoRewardTimer = setInterval(() => {
+      if (gameRunning) {
+        kosmoTimer += 30;
+        addScore(3);
+      }
+    }, 30000);
+    kosmoTimerInterval = setInterval(() => {
+      if (gameRunning) {
+        kosmoTimer++;
+        timerDisplay.textContent = formatTime(kosmoTimer);
+      }
+    }, 1000);
   }
-
   function moveRocket(dx) {
     if (!gameRunning) return;
     rocketX += dx;
     rocketX = Math.max(0, Math.min(gameArea.offsetWidth - rocket.offsetWidth, rocketX));
     rocket.style.left = rocketX + 'px';
   }
-
   function createMeteor() {
     if (!gameRunning) return;
     const meteor = document.createElement('div');
@@ -807,7 +839,6 @@ function startKosmoGame() {
     gameArea.appendChild(meteor);
     meteors.push({el: meteor, x, y: -40, size, speed: Math.random() * 2 + 2});
   }
-
   function updateMeteors() {
     if (!gameRunning) return;
     for (let i = meteors.length - 1; i >= 0; i--) {
@@ -839,22 +870,21 @@ function startKosmoGame() {
       }
     }
   }
-
   function gameLoop() {
     if (!gameRunning) return;
     updateMeteors();
     requestAnimationFrame(gameLoop);
   }
-
   function endGame() {
     gameRunning = false;
     gameoverDiv.innerHTML = '💥 Ты проиграл!';
     gameoverDiv.style.display = '';
     clearInterval(meteorInterval);
+    if (kosmoRewardTimer) clearInterval(kosmoRewardTimer);
+    if (kosmoTimerInterval) clearInterval(kosmoTimerInterval);
     meteors.forEach(m => m.el.remove());
     meteors = [];
   }
-
   function startGame() {
     document.querySelector('.game-section').style.display = 'none';
     resetGame();
@@ -862,7 +892,6 @@ function startKosmoGame() {
     function move() { updateMeteors(); if (gameRunning) requestAnimationFrame(move); }
     move();
   }
-
   leftBtn.onclick = () => moveRocket(-32);
   rightBtn.onclick = () => moveRocket(32);
   document.onkeydown = function(e) {
@@ -873,6 +902,8 @@ function startKosmoGame() {
   backBtn.onclick = function() {
     gameRunning = false;
     clearInterval(meteorInterval);
+    if (kosmoRewardTimer) clearInterval(kosmoRewardTimer);
+    if (kosmoTimerInterval) clearInterval(kosmoTimerInterval);
     meteors.forEach(m => m.el.remove());
     meteors = [];
     document.getElementById('kosmo-area').style.display = 'none';
@@ -884,3 +915,167 @@ function startKosmoGame() {
 
 // --- Переопределяю кнопки меню ---
 document.querySelector('button[onclick="startKosmoGame()"]') && (document.querySelector('button[onclick="startKosmoGame()"]').onclick = startKosmoGame);
+
+// --- Глобальные функции для баллов ---
+function getTotalScore() {
+  return parseInt(localStorage.getItem('dravon_score') || '0', 10);
+}
+function setScore(n) {
+  localStorage.setItem('dravon_score', n);
+  updateScoreCounter();
+}
+function addScore(n) {
+  setScore(getTotalScore() + n);
+}
+function updateScoreCounter() {
+  const el = document.getElementById('score-counter');
+  if (el) el.textContent = 'DravCoin: ' + getTotalScore();
+}
+// При загрузке страницы обновляем счётчик
+window.addEventListener('DOMContentLoaded', updateScoreCounter);
+
+function startKazino2() {
+  document.querySelector('.game-section').style.display = 'none';
+  document.getElementById('game-area').style.display = 'none';
+  document.getElementById('kazino2-area').style.display = '';
+  // Элементы
+  const balanceDisplay = document.getElementById('kazino2-balanceDisplay');
+  const slotStrip = document.getElementById('kazino2-slotStrip');
+  const spinBtn = document.getElementById('kazino2-spinBtn');
+  const spinSound = document.getElementById('kazino2-spinSound');
+  const caseOpenSound = document.getElementById('kazino2-caseOpenSound');
+  const backBtn = document.getElementById('kazino2-back');
+  const casinoPromoModal = document.getElementById('casino-promo-modal');
+  const casinoPromoCode = document.getElementById('casino-promo-code');
+  const casinoPromoSell = document.getElementById('casino-promo-sell');
+  const casinoPromoKeep = document.getElementById('casino-promo-keep');
+  let currentPromo = null;
+  // Баланс = DravCoin
+  function updateBalance() {
+    balanceDisplay.textContent = `Баланс: ${getTotalScore()} монет`;
+  }
+  // Генерация предметов
+  function getUsedCasinoPromos() {
+    return JSON.parse(localStorage.getItem('dravona_casino_promos_used') || '[]');
+  }
+  function markCasinoPromoUsed(code) {
+    const used = getUsedCasinoPromos();
+    used.push(code);
+    localStorage.setItem('dravona_casino_promos_used', JSON.stringify(used));
+  }
+  function generateItems(count) {
+    const items = [];
+    for(let i=0; i<count; i++) {
+      if (Math.random() < 0.10) {
+        const usedPromos = getUsedCasinoPromos();
+        const availablePromos = DRAVONA_PROMOCODES.filter(p => !usedPromos.includes(p));
+        if (availablePromos.length === 0) {
+          items.push({emoji: '🎟️', text: 'Промокоды закончились', promo: null, finished: true});
+        } else {
+          const promo = availablePromos[Math.floor(Math.random()*availablePromos.length)];
+          items.push({emoji: '🎟️', text: `Промокод`, promo});
+        }
+      } else {
+        const coins = 5 * (4 + Math.floor(Math.random() * 13));
+        items.push({emoji: '🪙', text: `${coins} монет`, coins});
+      }
+    }
+    return items;
+  }
+  const itemWidth = 100;
+  const spinCost = 150;
+  const baseItems = generateItems(50);
+  const repeatedItems = [...baseItems, ...baseItems, ...baseItems];
+  function renderStrip(items) {
+    slotStrip.innerHTML = '';
+    items.forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'slot-item';
+      div.innerHTML = `<div class="emoji">${item.emoji}</div><div>${item.text}</div>`;
+      slotStrip.appendChild(div);
+    });
+  }
+  renderStrip(repeatedItems);
+  let currentIndex = baseItems.length;
+  slotStrip.style.transform = `translateX(${-currentIndex * itemWidth + 300/2 - itemWidth/2}px)`;
+  updateBalance();
+  let spinning = false;
+  spinBtn.onclick = function() {
+    if(spinning) return;
+    if(getTotalScore() < spinCost) {
+      alert('Недостаточно монет для прокрутки!');
+      return;
+    }
+    setScore(getTotalScore() - spinCost);
+    updateBalance();
+    spinning = true;
+    spinBtn.disabled = true;
+    spinSound.currentTime = 0;
+    spinSound.play().catch(() => {});
+    const moveBy = Math.floor(30 + Math.random() * 20);
+    let targetIndex = currentIndex + moveBy;
+    const targetTranslateX = -targetIndex * itemWidth + 300/2 - itemWidth/2;
+    slotStrip.style.transition = 'transform 5s cubic-bezier(0.33, 1, 0.68, 1)';
+    slotStrip.style.transform = `translateX(${targetTranslateX}px)`;
+    setTimeout(() => {
+      currentIndex = targetIndex;
+      if(currentIndex >= baseItems.length * 2) {
+        currentIndex -= baseItems.length;
+        slotStrip.style.transition = 'none';
+        const resetTranslateX = -currentIndex * itemWidth + 300/2 - itemWidth/2;
+        slotStrip.style.transform = `translateX(${resetTranslateX}px)`;
+      }
+      spinSound.pause();
+      spinSound.currentTime = 0;
+      caseOpenSound.currentTime = 0;
+      caseOpenSound.play().catch(() => {});
+      const landedItem = repeatedItems[currentIndex];
+      if(landedItem.coins) {
+        addScore(landedItem.coins);
+        alert(`Выпало: ${landedItem.emoji} ${landedItem.text}\nВы получили ${landedItem.coins} монет!`);
+      } else if (landedItem.finished) {
+        alert('Промокоды закончились, обратитесь в Тех. Поддержку: @sanyok6789');
+      } else if (landedItem.promo) {
+        // --- Кастомная модалка для продажи/оставить ---
+        currentPromo = landedItem.promo;
+        casinoPromoCode.textContent = `🎟️`;
+        casinoPromoModal.style.display = 'flex';
+        casinoPromoSell.onclick = function() {
+          addScore(600);
+          markCasinoPromoUsed(currentPromo);
+          casinoPromoModal.style.display = 'none';
+          updateBalance();
+          alert('Промокод продан! Вы получили 600 DravCoin.');
+        };
+        casinoPromoKeep.onclick = function() {
+          markCasinoPromoUsed(currentPromo);
+          casinoPromoModal.style.display = 'none';
+          updateBalance();
+          alert(`Выпал промокод: ${currentPromo}\nВведи его в бота @Dravon_bot`);
+          alert(`Выпало: 🎟️ Промокод\nПоздравляем!`);
+        };
+        return;
+      }
+      updateBalance();
+      spinning = false;
+      spinBtn.disabled = false;
+    }, 5000);
+  };
+  backBtn.onclick = function() {
+    document.getElementById('kazino2-area').style.display = 'none';
+    document.getElementById('game-area').style.display = '';
+    showMenu();
+  };
+}
+// --- Переопределяю кнопку меню ---
+document.querySelector('button[onclick="startKazino2()"]') && (document.querySelector('button[onclick="startKazino2()"]').onclick = startKazino2);
+
+function getPromoUsedCount(code) {
+  const used = JSON.parse(localStorage.getItem('dravcoin_promos_used_count') || '{}');
+  return used[code] || 0;
+}
+function markPromoUsedCount(code) {
+  const used = JSON.parse(localStorage.getItem('dravcoin_promos_used_count') || '{}');
+  used[code] = (used[code] || 0) + 1;
+  localStorage.setItem('dravcoin_promos_used_count', JSON.stringify(used));
+}
