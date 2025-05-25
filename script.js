@@ -7,21 +7,19 @@ const DRAVONA_PROMOCODES = [
 
 // --- ПРОМОКОДЫ НА МОНЕТЫ ---
 const DRAVCOIN_PROMOS = {
-
-  // Новые коды:
   'OSSSIX': {reward: 50000, limit: 5},
   'OPEN': {reward: 50, limit: 100},
-  'BZINIGUZ': {reward: 100, limit: 2},
-  'SDIAD': {reward: 150, limit: 1},
-  'CIARJ': {reward: 150, limit: 1},
-  'ORGKW': {reward: 150, limit: 1},
-  'JEFBW': {reward: 150, limit: 1},
-  'CIUTS': {reward: 150, limit: 3},
-  'CKELE': {reward: 50, limit: 5},
-  'LILTIL': {reward: 100, limit: 5},
+  'ITAL': {reward: 100, limit: 2},
+  'PIKMI': {reward: 150, limit: 1},
+  'CIMF': {reward: 150, limit: 1},
+  'OPIC': {reward: 150, limit: 1},
+  'FGW': {reward: 150, limit: 1},
+  'KOKOY': {reward: 150, limit: 3},
+  'CANDI': {reward: 50, limit: 5},
+  'SPONER': {reward: 100, limit: 5},
   'TEST': {reward: 10, limit: 500},
-  'FCDK': {reward: 50, limit: 50},
-  'Love_HILEL': {reward: 150, limit: 2},
+  'SIMISI': {reward: 50, limit: 50},
+  'LOVE_HILEL': {reward: 1000, limit: 3},
 };
 
 function showMenu() {
