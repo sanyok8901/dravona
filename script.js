@@ -19,7 +19,7 @@ const DRAVCOIN_PROMOS = {
   'SPONER': {reward: 100, limit: 5},
   'TEST': {reward: 10, limit: 500},
   'SIMISI': {reward: 50, limit: 50},
-  'Love_HILEL': {reward: 1000, limit: 3},
+  'Love_HILEL': {reward: 10000, limit: 3},
 };
 
 function showMenu() {
