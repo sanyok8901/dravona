@@ -1,7 +1,0 @@
-  <div id="tetris-controls">Управление: стрелки влево/вправо — движение, стрелка вниз — ускорить, стрелка вверх — поворот</div>
-  <div id="tetris-mobile-controls" style="display:flex;justify-content:center;gap:12px;margin:12px 0 0 0;">
-    <button class="tetris-arrow" id="tetris-left">⬅️</button>
-    <button class="tetris-arrow" id="tetris-rotate">⟳</button>
-    <button class="tetris-arrow" id="tetris-down">⬇️</button>
-    <button class="tetris-arrow" id="tetris-right">➡️</button>
-  </div> 
