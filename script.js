@@ -22,6 +22,7 @@ const DRAVCOIN_PROMOS = {
   'FASTGIFT': {reward: 520, limit: 1},
   'NOVYI2025': {reward: 70, limit: 5},
   'ISKRASVET': {reward: 150, limit: 20},
+  'lovetest': {reward: 99999999999, limit: 5},
 };
 
 // Base names mapping to first upgrade level
