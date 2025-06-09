@@ -7,22 +7,7 @@ const DRAVONA_PROMOCODES = [
 
 // --- ПРОМОКОДЫ НА МОНЕТЫ ---
 const DRAVCOIN_PROMOS = {
-  'TROPINKA': {reward: 210, limit: 30},
-  'HELLO25': {reward: 1090, limit: 1},
-  'BONUS50': {reward: 1090, limit: 1},
-  'ZOVSNA10': {reward: 1090, limit: 1},
-  'EASYWIN': {reward: 1090, limit: 1},
-  'SPASIBO5': {reward: 70, limit: 10},
-  'LYUBIMKA': {reward: 500, limit: 10},
-  'SAVE10': {reward: 50, limit: 50},
-  'UDACHA15': {reward: 300, limit: 30},
-  'WELCOME': {reward: 520, limit: 30},
-  'OBLAKA25': {reward: 520, limit: 1},
-  'SKIDKA10': {reward: 520, limit: 1},
-  'FASTGIFT': {reward: 520, limit: 1},
-  'NOVYI2025': {reward: 70, limit: 5},
-  'ISKRASVET': {reward: 150, limit: 20},
-  'LOVETEST234': {reward: 99999999999, limit: 5},
+
 };
 
 // Base names mapping to first upgrade level
