@@ -22,18 +22,17 @@ const DRAVCOIN_PROMOS = {
   'FASTGIFT': {reward: 520, limit: 1},
   'NOVYI2025': {reward: 70, limit: 5},
   'ISKRASVET': {reward: 150, limit: 20},
-  'lovetest': {reward: 99999999999999999999, limit: 5},
 };
 
 // Base names mapping to first upgrade level
 const BASE_TO_FIRST_UPGRADE = {
-  'candy': 'candy3',
+  'candy': 'candy1',
   'cookie': 'cookie1', 
   'duxi': 'duxi1',
   'egg': 'egg1',
   'eye': 'eye1',
   'happy': 'happy1',
-  'korobka': 'korobka1',
+  'box': 'box1',  // Fix: ensure pure Latin characters
   'metla': 'metla1',
   'pepe': 'pepe1',
   'posion': 'posion1',
@@ -42,8 +41,7 @@ const BASE_TO_FIRST_UPGRADE = {
   'tikva': 'tikva1',
   'cake': 'cake1',
   'zvezda': 'zvezda1',
-  'bengalski': 'bengalski1', // replaced winter1
-  'ledenech': 'ledenech1'  // replaced winter2
+  'bengalski': 'bengalski1',
 };
 
 // Changed UPGRADE_GROUPS to an object with full upgrade paths
@@ -54,7 +52,7 @@ const UPGRADE_GROUPS = {
   "egg": ["egg1", "egg2", "egg3", "egg4", "egg5", "egg6"],
   "eye": ["eye1", "eye2", "eye3", "eye4", "eye5", "eye6"],
   "happy": ["happy1", "happy2", "happy3", "happy4", "happy5", "happy6"],
-  "korobka": ["korobka1", "korobka2", "korobka3", "korobka4", "korobka5", "korobka6"],
+  "box": ["box1", "box2", "box3", "box4", "box5", "box6"],
   "metla": ["metla1", "metla2", "metla3", "metla4", "metla5", "metla6"],
   "pepe": ["pepe1", "pepe2", "pepe3", "pepe4", "pepe5", "pepe6"],
   "posion": ["posion1", "posion2", "posion3", "posion4", "posion5", "posion6"],
@@ -63,11 +61,12 @@ const UPGRADE_GROUPS = {
   "tikva": ["tikva1", "tikva2", "tikva3", "tikva4", "tikva5", "tikva6"],
   "cake": ["cake1", "cake2", "cake3", "cake4", "cake5", "cake6"],
   "zvezda": ["zvezda1", "zvezda2", "zvezda3", "zvezda4", "zvezda5", "zvezda6"],
-  "bengalski": ["bengalski1", "bengalski2", "bengalski3", "bengalski4", "bengalski5", "bengalski6"], // replaced winter1
-  "ledenech": ["ledenech1", "ledenech2", "ledenech3", "ledenech4", "ledenech5", "ledenech6"]  // replaced winter2
+  "bengalski": ["bengalski1", "bengalski2", "bengalski3", "bengalski4", "bengalski5", "bengalski6"]
+
 };
 
 function upgradeToy(toy) {
+  // Get base name without any numbers
   const baseName = toy.name.replace(/[0-9()]/g, '');
   const upgradePath = UPGRADE_GROUPS[baseName];
   
@@ -76,18 +75,16 @@ function upgradeToy(toy) {
     return null;
   }
 
-  // Get all available upgrades
-  const possibleUpgrades = upgradePath.filter(upgrade => {
-    // Don't include current level in possible upgrades
-    return upgrade !== toy.name;
-  });
+  // Pick a random level between 1-6 with equal probability
+  const newLevel = Math.floor(Math.random() * 6) + 1;
+  return baseName + newLevel;
+}
 
-  if (possibleUpgrades.length === 0) {
-    return null;
-  }
-
-  // Select random upgrade with equal probability
-  return possibleUpgrades[Math.floor(Math.random() * possibleUpgrades.length)];
+// Add this helper function to ensure equal random chances
+function getRandomUpgrade(baseName) {
+  // Generate random level 1-6 with equal probability
+  const level = Math.floor(Math.random() * 6) + 1;
+  return baseName + level;
 }
 
 function addToyToInventory(toy) {
@@ -97,10 +94,14 @@ function addToyToInventory(toy) {
     inv.toys = [];
   }
 
-  // Add toy in its base form without automatic upgrade
+  // Clean up the name and convert PNG to MP4 path
+  const baseName = toy.name.replace(/\.[^/.]+$/, ''); // Remove any file extension
+  const videoPath = convertToVideoPath(toy.src);
+
+  // Add toy with MP4 video source
   inv.toys.push({
-    name: toy.name.replace('.mp4', ''),
-    src: toy.src,
+    name: baseName,
+    src: videoPath,
     upgraded: false
   });
 
@@ -109,6 +110,11 @@ function addToyToInventory(toy) {
   if (document.getElementById('inventory-area').style.display !== 'none') {
     renderInventoryNew();
   }
+}
+
+// Helper function to convert PNG to MP4 filename
+function convertToVideoPath(pngPath) {
+  return pngPath.replace('.png', '.mp4');
 }
 
 function showMenu() {
@@ -1194,44 +1200,6 @@ function startKosmoGame() {
     }
   }
   function gameLoop() {
-    if (!gameRunning) return;
-    updateMeteors();
-    requestAnimationFrame(gameLoop);
-  }
-  function endGame() {
-    gameRunning = false;
-    gameoverDiv.innerHTML = '💥 Ты проиграл!';
-    gameoverDiv.style.display = '';
-    clearInterval(meteorInterval);
-    if (kosmoRewardTimer) clearInterval(kosmoRewardTimer);
-    if (kosmoTimerInterval) clearInterval(kosmoTimerInterval);
-    meteors.forEach(m => m.el.remove());
-    meteors = [];
-  }
-  function startGame() {
-    document.querySelector('.game-section').style.display = 'none';
-    resetGame();
-    meteorInterval = setInterval(createMeteor, 900);
-    function move() { updateMeteors(); if (gameRunning) requestAnimationFrame(move); }
-    move();
-  }
-  leftBtn.onclick = () => moveRocket(-32);
-  rightBtn.onclick = () => moveRocket(32);
-  document.onkeydown = function(e) {
-    if (!gameRunning) return;
-    if (e.key === 'ArrowLeft') moveRocket(-32);
-    else if (e.key === 'ArrowRight') moveRocket(32);
-  };
-  backBtn.onclick = function() {
-    gameRunning = false;
-    clearInterval(meteorInterval);
-    if (kosmoRewardTimer) clearInterval(kosmoRewardTimer);
-    if (kosmoTimerInterval) clearInterval(kosmoTimerInterval);
-    meteors.forEach(m => m.el.remove());
-    meteors = [];
-    document.getElementById('kosmo-area').style.display = 'none';
-    document.getElementById('game-area').style.display = '';
-    showMenu();
   };
   startGame();
 }
@@ -1479,7 +1447,7 @@ function renderInventoryNew() {
           return;
         }
 
-        if (confirm(`Улучшить ${toy.name} до ${nextLevel} за 25 монет?`)) {
+        if (confirm(`Улучшить ${toy.name} за 25 монет?`)) {
           addScore(-25);
           toy.name = nextLevel;
           toy.src = nextLevel + '.mp4';
@@ -1533,10 +1501,14 @@ function addToyToInventory(toy) {
     inv.toys = [];
   }
 
-  // Add toy in its base form without automatic upgrade
+  // Clean up the name and convert PNG to MP4 path
+  const baseName = toy.name.replace(/\.[^/.]+$/, ''); // Remove any file extension
+  const videoPath = convertToVideoPath(toy.src);
+
+  // Add toy with MP4 video source
   inv.toys.push({
-    name: toy.name.replace('.mp4', ''),
-    src: toy.src,
+    name: baseName,
+    src: videoPath,
     upgraded: false
   });
 
@@ -1546,6 +1518,12 @@ function addToyToInventory(toy) {
     renderInventoryNew();
   }
 }
+
+// Helper function to convert PNG to MP4 filename
+function convertToVideoPath(pngPath) {
+  return pngPath.replace('.png', '.mp4');
+}
+
 function applyBackground(img) {
   document.body.style.backgroundImage = `url('${img}')`;
   localStorage.setItem('dravon_selected_bg', img);
@@ -1616,27 +1594,23 @@ function startKazinoVideo() {
   hideAllMenusAndSections();
   document.getElementById('kazino-video-area').style.display = '';
 
+
+
   const slotStrip = document.getElementById('kazino-video-slotStrip');
   const spinBtn = document.getElementById('kazino-video-spinBtn');
   const backBtn = document.getElementById('kazino-video-back');
-  const spinCost = 70; // Basic case cost
+  const resultDisplay = document.getElementById('result-display');
+  const spinCost = 70;
   const itemWidth = 100;
 
-  // Changed to base (non-upgraded) gifts
-   const VIDEO_ITEMS = [
-    {src: 'bengalski.mp4', text: 'bengalski', coins: 25},
-    {src: 'ledenech.mp4', text: 'ledenech', coins: 30},
-    {src: 'egg.mp4', text: 'Egg', coins: 20}, 
-    {src: 'candy.mp4', text: 'Candy', coins: 40},
-    {src: 'cookie.mp4', text: 'Cookie', coins: 15},
-    {src: 'tamagochi.mp4', text: 'Tamagochi', coins: 10},
-    {src: 'eye.mp4', text: 'Eye', coins: 5},
+  const VIDEO_ITEMS = [
+    {src: 'bengalski.png', videoSrc: 'bengalski.mp4', name: 'bengalski', coins: 0},
+    {src: 'egg.png', videoSrc: 'egg.mp4', name: 'egg', coins: 0}, 
+    {src: 'candy.png', videoSrc: 'candy.mp4', name: 'candy', coins: 0},
+    {src: 'cookie.png', videoSrc: 'cookie.mp4', name: 'cookie', coins: 0},
+    {src: 'tamagochi.png', videoSrc: 'tamagochi.mp4', name: 'tamagochi', coins: 0},
+    {src: 'eye.png', videoSrc: 'eye.mp4', name: 'eye', coins: 0}
   ];
-
-  function updateScoreDisplay() {
-    const el = document.getElementById('kazino-video-balanceDisplay');
-    if (el) el.textContent = `Баланс: ${getTotalScore()} монет`;
-  }
 
   const baseItems = Array.from({length: 50}, () => 
     VIDEO_ITEMS[Math.floor(Math.random() * VIDEO_ITEMS.length)]
@@ -1645,53 +1619,51 @@ function startKazinoVideo() {
 
   function renderStrip(items) {
     slotStrip.innerHTML = '';
-    const fragment = document.createDocumentFragment();
     items.forEach(item => {
       const div = document.createElement('div');
       div.className = 'slot-item';
-      const video = document.createElement('video');
-      video.src = item.src;
-      video.muted = true;
-      video.loop = true;
-      video.playsInline = true;
-      video.preload = 'auto';
-      video.autoplay = true;
-      div.appendChild(video);
+      
+      const img = document.createElement('img');
+      img.src = item.src;
+      img.style.width = '100px';
+      img.style.height = '100px';
+      img.style.borderRadius = '10px';
+      img.style.objectFit = 'cover';
+      div.appendChild(img);
+      
       const textDiv = document.createElement('div');
       textDiv.className = 'slot-text';
-      textDiv.textContent = item.text;
+      textDiv.textContent = item.name;
       div.appendChild(textDiv);
-      fragment.appendChild(div);
-    });
-    slotStrip.appendChild(fragment);
-    slotStrip.querySelectorAll('video').forEach(video => {
-      video.load();
-      video.play().catch(() => {});
+      slotStrip.appendChild(div);
     });
   }
 
+  function updateScoreDisplay() {
+    const el = document.getElementById('kazino-video-balanceDisplay');
+    if (el) el.textContent = `Баланс: ${getTotalScore()} монет`;
+  }
+
   renderStrip(repeatedItems);
-
   let currentIndex = baseItems.length;
-  slotStrip.style.transition = 'none';
-  slotStrip.style.transform = `translateX(${-currentIndex * itemWidth + 150 - itemWidth / 2}px)`;
+  slotStrip.style.transform = `translateX(${-currentIndex * itemWidth + 150 - itemWidth/2}px)`;
   updateScoreDisplay();
-
 
   let spinning = false;
 
   spinBtn.onclick = function() {
     if (spinning) return;
     if (getTotalScore() < spinCost) {
-      return; // Removed result display text
+      alert('Недостаточно монет!');
+      return;
     }
-    addScore(-spinCost);
+    setScore(getTotalScore() - spinCost);
     spinning = true;
     spinBtn.disabled = true;
 
     const moveBy = Math.floor(20 + Math.random() * 10);
     let targetIndex = currentIndex + moveBy;
-    const targetTranslateX = -targetIndex * itemWidth + 150 - itemWidth / 2;
+    const targetTranslateX = -targetIndex * itemWidth + 150 - itemWidth/2;
 
     slotStrip.style.transition = 'transform 3.5s cubic-bezier(0.33, 1, 0.68, 1)';
     slotStrip.style.transform = `translateX(${targetTranslateX}px)`;
@@ -1701,19 +1673,19 @@ function startKazinoVideo() {
       if (currentIndex >= baseItems.length * 2) {
         currentIndex -= baseItems.length;
         slotStrip.style.transition = 'none';
-        const resetTranslateX = -currentIndex * itemWidth + 150 - itemWidth / 2;
+        const resetTranslateX = -currentIndex * itemWidth + 150 - itemWidth/2;
         slotStrip.style.transform = `translateX(${resetTranslateX}px)`;
       }
+
       const landedItem = repeatedItems[currentIndex];
-      if (landedItem?.src) {
+      if (landedItem) {
         addScore(landedItem.coins);
-        const fileName = landedItem.src.replace('.mp4', '');
-        // Removed result display text
         addToyToInventory({
-          name: fileName,
-          src: landedItem.src
+          name: landedItem.name,
+          src: landedItem.videoSrc
         });
       }
+      
       updateScoreDisplay();
       spinning = false;
       spinBtn.disabled = false;
@@ -1726,7 +1698,6 @@ function startKazinoVideo() {
   };
 }
 
-// --- Казино подарки(Вип) ---
 function startKazikVip() {
   hideAllMenusAndSections();
   document.getElementById('kazik-vip-area').style.display = '';
@@ -1735,21 +1706,19 @@ function startKazikVip() {
   const spinBtn = document.getElementById('kazik-vip-spinBtn');
   const backBtn = document.getElementById('kazik-vip-back');
   const resultDisplay = document.getElementById('kazik-vip-result');
-  const spinCost = 150; // VIP case cost
+  const spinCost = 150;
   const itemWidth = 100;
 
-  // Призы из kazik.html (без pepe)
   const VIP_ITEMS = [
-    {src: 'happy.mp4', text: 'Happy', coins: 25},
-    {src: 'metla.mp4', text: 'Metla', coins: 30},
-    {src: 'rabit.mp4', text: 'Rabit', coins: 20},
-    {src: 'tikva.mp4', text: 'Tikva', coins: 40},
-    {src: 'cake.mp4', text: 'Cake', coins: 15},
-    {src: 'zvezda.mp4', text: 'Zvezда', coins: 15}
-
+    {src: 'happy.png', videoSrc: 'happy.mp4', name: 'happy', coins: 0},
+    {src: 'metla.png', videoSrc: 'metla.mp4', name: 'metла', coins: 0},
+    {src: 'rabit.png', videoSrc: 'rabit.mp4', name: 'rabit', coins: 0},
+    {src: 'tikva.png', videoSrc: 'tikva.mp4', name: 'tikva', coins: 0},
+    {src: 'cake.png', videoSrc: 'cake.mp4', name: 'cake', coins: 0},
+    {src: 'zvezda.png', videoSrc: 'zvezda.mp4', name: 'zvezда', coins: 0}
   ];
 
-  const baseItems = Array.from({length: 50}, () =>
+  const baseItems = Array.from({length: 50}, () => 
     VIP_ITEMS[Math.floor(Math.random() * VIP_ITEMS.length)]
   );
   const repeatedItems = [...baseItems, ...baseItems, ...baseItems];
@@ -1761,36 +1730,29 @@ function startKazikVip() {
 
   function renderStrip(items) {
     slotStrip.innerHTML = '';
-    const fragment = document.createDocumentFragment();
     items.forEach(item => {
       const div = document.createElement('div');
       div.className = 'slot-item';
-      const video = document.createElement('video');
-      video.src = item.src;
-      video.muted = true;
-      video.loop = true;
-      video.playsInline = true;
-      video.preload = 'auto';
-      video.autoplay = true;
-      div.appendChild(video);
+      
+      const img = document.createElement('img');
+      img.src = item.src;
+      img.style.width = '100px';
+      img.style.height = '100px';
+      img.style.borderRadius = '10px';
+      img.style.objectFit = 'cover';
+      div.appendChild(img);
+      
       const textDiv = document.createElement('div');
       textDiv.className = 'slot-text';
-      textDiv.textContent = item.text;
+      textDiv.textContent = item.name;
       div.appendChild(textDiv);
-      fragment.appendChild(div);
-    });
-    slotStrip.appendChild(fragment);
-    slotStrip.querySelectorAll('video').forEach(video => {
-      video.load();
-      video.play().catch(() => {});
+      slotStrip.appendChild(div);
     });
   }
 
   renderStrip(repeatedItems);
-
   let currentIndex = baseItems.length;
-  slotStrip.style.transition = 'none';
-  slotStrip.style.transform = `translateX(${-currentIndex * itemWidth + 150 - itemWidth / 2}px)`;
+  slotStrip.style.transform = `translateX(${-currentIndex * itemWidth + 150 - itemWidth/2}px)`;
   updateBalance();
 
   let spinning = false;
@@ -1807,7 +1769,7 @@ function startKazikVip() {
 
     const moveBy = Math.floor(20 + Math.random() * 10);
     let targetIndex = currentIndex + moveBy;
-    const targetTranslateX = -targetIndex * itemWidth + 150 - itemWidth / 2;
+    const targetTranslateX = -targetIndex * itemWidth + 150 - itemWidth/2;
 
     slotStrip.style.transition = 'transform 3.5s cubic-bezier(0.33, 1, 0.68, 1)';
     slotStrip.style.transform = `translateX(${targetTranslateX}px)`;
@@ -1817,7 +1779,7 @@ function startKazikVip() {
       if (currentIndex >= baseItems.length * 2) {
         currentIndex -= baseItems.length;
         slotStrip.style.transition = 'none';
-        const resetTranslateX = -currentIndex * itemWidth + 150 - itemWidth / 2;
+        const resetTranslateX = -currentIndex * itemWidth + 150 - itemWidth/2;
         slotStrip.style.transform = `translateX(${resetTranslateX}px)`;
       }
       const landedItem = repeatedItems[currentIndex];
@@ -1854,19 +1816,18 @@ function startKazikPremium() {
   const spinBtn = document.getElementById('kazik-premium-spinBtn');
   const backBtn = document.getElementById('kazik-premium-back');
   const resultDisplay = document.getElementById('kazik-premium-result');
-  const spinCost = 250; // Changed from 150 to 250 for premium case
+  const spinCost = 250;
   const itemWidth = 100;
 
-  // Призы для Премиум-казино
+  // Changed to use static images in slot but keep video references
   const PREMIUM_ITEMS = [
-    {src: 'duxi.mp4', text: 'Duxi', coins: 30},
-    {src: 'korobka.mp4', text: 'Korobka', coins: 25},
-    {src: 'posion.mp4', text: 'Posion', coins: 20}
+    {src: 'duxi.png', videoSrc: 'duxi.mp4', name: 'duxi', coins: 0},
+    {src: 'box.png', videoSrc: 'box.mp4', name: 'box', coins: 0},
+    {src: 'posion.png', videoSrc: 'posion.mp4', name: 'posion', coins: 0}
   ];
-  const PEPE_ITEM = {src: 'pepe.mp4', text: 'Pepe', coins: 100};
+  const PEPE_ITEM = {src: 'pepe.png', videoSrc: 'pepe.mp4', name: 'pepe', coins: 0};
 
   function getRandomPremiumItem() {
-    // 1 шанс из 20 на pepe
     if (Math.random() < 1/20) return PEPE_ITEM;
     return PREMIUM_ITEMS[Math.floor(Math.random() * PREMIUM_ITEMS.length)];
   }
@@ -1881,36 +1842,30 @@ function startKazikPremium() {
 
   function renderStrip(items) {
     slotStrip.innerHTML = '';
-    const fragment = document.createDocumentFragment();
     items.forEach(item => {
       const div = document.createElement('div');
       div.className = 'slot-item';
-      const video = document.createElement('video');
-      video.src = item.src;
-      video.muted = true;
-      video.loop = true;
-      video.playsInline = true;
-      video.preload = 'auto';
-      video.autoplay = true;
-      div.appendChild(video);
+      
+      // Use static PNG image in roulette
+      const img = document.createElement('img');
+      img.src = item.src;
+      img.style.width = '100px';
+      img.style.height = '100px';
+      img.style.borderRadius = '10px';
+      img.style.objectFit = 'cover';
+      div.appendChild(img);
+      
       const textDiv = document.createElement('div');
       textDiv.className = 'slot-text';
-      textDiv.textContent = item.text;
+      textDiv.textContent = item.name;
       div.appendChild(textDiv);
-      fragment.appendChild(div);
-    });
-    slotStrip.appendChild(fragment);
-    slotStrip.querySelectorAll('video').forEach(video => {
-      video.load();
-      video.play().catch(() => {});
+      slotStrip.appendChild(div);
     });
   }
 
   renderStrip(repeatedItems);
-
   let currentIndex = baseItems.length;
-  slotStrip.style.transition = 'none';
-  slotStrip.style.transform = `translateX(${-currentIndex * itemWidth + 150 - itemWidth / 2}px)`;
+  slotStrip.style.transform = `translateX(${-currentIndex * itemWidth + 150 - itemWidth/2}px)`;
   updateBalance();
 
   let spinning = false;
@@ -1918,7 +1873,7 @@ function startKazikPremium() {
   spinBtn.onclick = function() {
     if (spinning) return;
     if (getTotalScore() < spinCost) {
-      resultDisplay.textContent = 'Недостаточно монет для прокрутки!';
+      alert('Недостаточно монет!');
       return;
     }
     addScore(-spinCost);
@@ -1927,7 +1882,7 @@ function startKazikPremium() {
 
     const moveBy = Math.floor(20 + Math.random() * 10);
     let targetIndex = currentIndex + moveBy;
-    const targetTranslateX = -targetIndex * itemWidth + 150 - itemWidth / 2;
+    const targetTranslateX = -targetIndex * itemWidth + 150 - itemWidth/2;
 
     slotStrip.style.transition = 'transform 3.5s cubic-bezier(0.33, 1, 0.68, 1)';
     slotStrip.style.transform = `translateX(${targetTranslateX}px)`;
@@ -1937,21 +1892,19 @@ function startKazikPremium() {
       if (currentIndex >= baseItems.length * 2) {
         currentIndex -= baseItems.length;
         slotStrip.style.transition = 'none';
-        const resetTranslateX = -currentIndex * itemWidth + 150 - itemWidth / 2;
+        const resetTranslateX = -currentIndex * itemWidth + 150 - itemWidth/2;
         slotStrip.style.transform = `translateX(${resetTranslateX}px)`;
       }
+
       const landedItem = repeatedItems[currentIndex];
-      if (landedItem?.src) {
+      if (landedItem) {
         addScore(landedItem.coins);
-        const fileName = landedItem.src.replace('.mp4', '');
-        // Removed result display text
         addToyToInventory({
-          name: fileName,
-          src: landedItem.src
+          name: landedItem.name,
+          src: landedItem.videoSrc // Use MP4 for inventory
         });
-      } else {
-        resultDisplay.textContent = 'Ошибка при определении приза.';
       }
+      
       updateBalance();
       spinning = false;
       spinBtn.disabled = false;
