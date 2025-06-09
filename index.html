@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Меню игр</title>
+
+
+  <!-- Подключение CSS -->
+  <link rel="stylesheet" href="./style.css" />
+  <link rel="stylesheet" href="./button-game.css" />
+  <link rel="stylesheet" href="./tetris.css" />
+
+  <style>
+    #score-counter {
+      display: flex !important;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255,255,255,0.95);
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(30,144,255,0.10);
+      padding: 8px 24px;
+      font-size: 22px;
+      font-weight: bold;
+      color: #ff9800;
+      position: fixed;
+      left: 50%;
+      top: 20px;
+      transform: translateX(-50%);
+      z-index: 2001;
+      opacity: 0;
+      animation: fadeInScore 0.7s 0.2s forwards;
+      transition: box-shadow 0.2s, background 0.2s;
+    }
+    #score-counter:hover {
+      box-shadow: 0 4px 16px rgba(30,144,255,0.18);
+      background: rgba(255,255,255,1);
+    }
+    #score-counter img {
+      height: 34px;
+      width: 34px;
+      border-radius: 50%;
+      box-shadow: 0 2px 8px rgba(30,144,255,0.18);
+      background: #fff;
+      object-fit: cover;
+      margin-right: 8px;
+      border: 2px solid #ff9800;
+      transition: box-shadow 0.2s, border 0.2s;
+    }
+    #score-counter:hover img {
+      box-shadow: 0 4px 16px rgba(30,144,255,0.25);
+      border: 2px solid #1E90FF;
+    }
+    #score-counter span {
+      display: inline-block;
+      vertical-align: middle;
+      letter-spacing: 1px;
+    }
+    @keyframes fadeInScore {
+      from { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+      to { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+    @media (max-width: 600px) {
+      #score-counter {
+        font-size: 15px !important;
+        padding: 4px 10px !important;
+        border-radius: 16px !important;
+        min-width: 120px;
+        max-width: 90vw;
+      }
+      #score-counter img {
+        height: 22px;
+        width: 22px;
+        margin-right: 5px;
+      }
+    }
+  </style>
+
+</head>
+<body>
+
+  <div class="header-logo">
+    <img src="./Dravona.jpg" alt="Dravona Logo" class="logo-img" />
+  </div>
+  <div class="header-text">Dravon</div>
+
+
+  <h1>Выбери игру</h1>
+
+  <div id="score-counter" style="position:fixed;left:50%;top:20px;transform:translateX(-50%);z-index:2001;background:rgba(255,255,255,0.95);border-radius:12px;padding:8px 24px;font-size:22px;font-weight:bold;color:#ff9800;box-shadow:0 2px 8px rgba(30,144,255,0.10);display:flex;align-items:center;gap:10px;">
+    <img src="Logo.jpg" alt="Logo" style="height:28px;vertical-align:middle;"> <span>DravCoin: 0</span>
+  </div>
+
+  <div class="main-menu" id="main-menu" style="display:flex;flex-direction:column;gap:18px;max-width:320px;margin:0 auto 24px auto;">
+    <button id="menu-games-btn" style="font-size:20px;padding:16px 0;">🎮 Игры</button>
+    <button id="menu-shop-btn" style="font-size:20px;padding:16px 0;">🛒 Магазин</button>
+    <button id="menu-inventory-btn" style="font-size:20px;padding:16px 0;">🎒 Инвентарь</button>
+    <!-- <button id="main-casino-video-btn" style="font-size:20px;padding:16px 0;background:#007bff;color:#fff;">🎥 Казино Видео</button> -->
+  </div>
+  <div class="game-section" id="games-section" style="display:none;">
+    <button onclick="startTicTacToe()">1. Крестики-нолики</button>
+    <button onclick="startBombGame()">2. Не попади на бомбу</button>
+    <button onclick="startGuessNumber()">3. Угадай число</button>
+    <button onclick="startMathQuiz()">4. Математическая викторина</button>
+    <button onclick="startButtonGame()">5. Кнопка</button>
+    <button onclick="startTetris()">6. Тетрис</button>
+    <button onclick="startKosmoGame()">7. Космическая игра</button>
+    <button onclick="startMemoryGame()">8. Игра на память</button>
+    <button id="games-back-btn" class="back-btn" style="font-size:18px;padding:14px 0;width:100%;margin-top:18px;">⬅️ Назад в меню</button>
+  </div>
+
+  <div id="game-area"></div>
+
+  <!-- Секция для игры 'Поймай кнопку' (будет показана через JS) -->
+  <div id="catch-button-area" style="display:none;">
+    <h2>Поймай кнопку!</h2>
+    <div id="catch-score">Очки: 0</div>
+    <div id="catch-timer">Осталось: 30 сек</div>
+    <button id="catch-startBtn">Старт</button>
+    <button id="catch-btn">Жми меня!</button>
+    <button class="back-btn" id="catch-back">Назад в меню</button>
+  </div>
+  <!-- Секция для тетриса (будет показана через JS) -->
+  <div id="tetris-area" style="display:none;">
+    <h2>Тетрис</h2>
+    <div id="tetris-game">
+      <canvas id="tetris-canvas-main" width="240" height="480"></canvas>
+    </div>
+    <div id="tetris-score-main">Очки: 0</div>
+    <div id="tetris-controls">Управление: стрелки влево/вправо — движение, стрелка вниз — ускорить, стрелка вверх — поворот</div>
+    <div id="tetris-mobile-controls" style="display:flex;justify-content:center;gap:12px;margin:12px 0 0 0;">
+      <button class="tetris-arrow" id="tetris-left">⬅️</button>
+      <button class="tetris-arrow" id="tetris-rotate">⟳</button>
+      <button class="tetris-arrow" id="tetris-down">⬇️</button>
+      <button class="tetris-arrow" id="tetris-right">➡️</button>
+    </div>
+    <button class="back-btn" id="tetris-back">Назад в меню</button>
+  </div>
+  <!-- Секция для игры на память (будет показана через JS) -->
+  <div id="memory-area" style="display:none;">
+    <h2>Игра на память</h2>
+    <div class="game-board" id="memory-game-board"></div>
+    <div class="game-over" id="memory-game-over">Поздравляем! Вы выиграли!</div>
+    <button class="back-btn" id="memory-back">Назад в меню</button>
+  </div>
+  <!-- Секция для космической игры (будет показана через JS) -->
+  <div id="kosmo-area" style="display:none;">
+    <h2>Космическая игра</h2>
+    <div id="kosmo-timer" style="font-size:20px;color:#1E90FF;margin-bottom:8px;">00:00</div>
+    <div id="kosmo-gameArea" style="position:relative;width:320px;height:480px;margin:0 auto;background:#000;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(30,144,255,0.10);">
+      <div id="kosmo-rocket" style="position:absolute;bottom:30px;left:50%;width:44px;height:44px;transform:translateX(-50%);font-size:40px;text-align:center;z-index:2;">🚀</div>
+    </div>
+    <div id="kosmo-controls" style="margin-top:18px;">
+      <button class="tetris-arrow" id="kosmo-left">⬅️</button>
+      <button class="tetris-arrow" id="kosmo-right">➡️</button>
+    </div>
+    <div id="kosmo-gameover" style="display:none;color:#e53935;font-size:1.5em;margin:18px 0;"></div>
+    <button class="back-btn" id="kosmo-back">Назад в меню</button>
+  </div>
+  <!-- Секция для игры 'Казино' (будет показана через JS) -->
+  <div id="kazino2-area" style="display:none;">
+    <h2>Казино</h2>
+    <div class="balance" id="kazino2-balanceDisplay">Баланс: 0 монет</div>
+    <div class="slot-container">
+      <div class="indicator"></div>
+      <div class="slot-strip" id="kazino2-slotStrip"></div>
+    </div>
+    <button id="kazino2-spinBtn">Крутить (70 монет)</button>
+    <button class="back-btn" id="kazino2-back">Назад в меню</button>
+    <audio id="kazino2-spinSound" preload="auto" loop>
+      <source src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg" type="audio/ogg">
+      <source src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="kazino2-caseOpenSound" preload="auto">
+      <source src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg" type="audio/ogg">
+      <source src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.mp3" type="audio/mpeg">
+    </audio>
+  </div>
+
+  <div id="music-volume-container" style="position:fixed;left:50%;bottom:10px;transform:translateX(-50%);z-index:2000;display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.8);border-radius:12px;padding:6px 16px;box-shadow:0 2px 8px rgba(30,144,255,0.10);">
+    <span style="font-size:16px;">🔊</span>
+    <input type="range" id="music-volume" min="0" max="1" step="0.01" value="0.5" style="width:120px;">
+    <label for="music-select" style="margin-left:12px;font-size:16px;">Музыка:</label>
+    <select id="music-select" style="font-size:16px;padding:2px 8px;border-radius:6px;">
+      <option value="music.mp3">Dravon Bit</option>
+      <option value="music2.mp3">Chill</option>
+      <option value="music3.mp3">Expectation</option>
+      <option value="music4.mp3">Gummi Bear</option>
+      <option value="music6.mp3">Guitar Metal</option>
+      <option value="music7.mp3">Epic Adventure</option>
+      <option value="music8.mp3">Lo-fi Vibes</option>
+    </select>
+    <button id="promo-open-btn" style="margin-left:18px;background:#ff9800;color:#fff;font-size:18px;padding:10px 22px;border-radius:12px;box-shadow:0 2px 8px rgba(67,160,71,0.15);border:none;cursor:pointer;">🎁 Ввести промокод</button>
+  </div>
+  <audio id="bg-music" src="music.mp3" autoplay loop hidden></audio>
+
+  <!-- Подключение JS в конце body -->
+  <script src="./script.js"></script>
+  <script src="./tetris.js"></script>
+
+  <div id="shop-area" style="display:none;max-width:350px;margin:0 auto;background:rgba(255,255,255,0.95);border-radius:16px;box-shadow:0 4px 24px rgba(30,144,255,0.10);padding:24px 10px 30px 10px;position:relative;text-align:center;">
+    <h2>Магазин</h2>
+    <button onclick="openBackgroundCase()" style="width:200px;margin:10px auto 20px auto;padding:12px 24px;font-size:18px;display:block;">Кейс с фонами</button>
+    <img src="padarki.png" onclick="startKazinoVideo()" style="width:93px;height:187px;margin:0 auto;display:block;border-radius:8px;cursor:pointer;transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+    <img src="padarki_vip.png" onclick="startKazikVip()" style="width:93px;height:187px;margin:0 auto;display:block;border-radius:8px;cursor:pointer;transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+    <img src="padarki_premium.png" onclick="startKazikPremium()" style="width:93px;height:187px;margin:0 auto;display:block;border-radius:8px;cursor:pointer;transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+    <button class="back-btn" id="shop-back">Назад в меню</button>
+  </div>
+
+  <!-- Модалка для продажи промокода из казино -->
+  <div id="casino-promo-modal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.45);z-index:4000;justify-content:center;align-items:center;">
+    <div style="background:#fff;color:#222;padding:32px 24px;border-radius:16px;box-shadow:0 4px 24px rgba(30,144,255,0.15);min-width:320px;max-width:90vw;position:relative;text-align:center;">
+      <h3 style="margin-bottom:18px;">Выпал промокод!</h3>
+      <div id="casino-promo-code" style="font-size:20px;margin-bottom:18px;"></div>
+      <button id="casino-promo-sell" style="font-size:18px;padding:8px 18px;border-radius:8px;background:#ff9800;color:#fff;border:none;margin-right:12px;">Продать за 600 DravCoin</button>
+      <button id="casino-promo-keep" style="font-size:18px;padding:8px 18px;border-radius:8px;background:#43a047;color:#fff;border:none;">Оставить себе</button>
+    </div>
+  </div>
+
+  <!-- Переместить модалку promo-modal вниз, чтобы она не мешала -->
+  <div id="promo-modal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.45);z-index:3000;justify-content:center;align-items:center;">
+    <div style="background:#fff;color:#222;padding:32px 24px;border-radius:16px;box-shadow:0 4px 24px rgba(30,144,255,0.15);min-width:320px;max-width:90vw;position:relative;">
+      <button id="promo-modal-close" style="position:absolute;top:8px;right:12px;font-size:22px;background:none;border:none;color:#888;cursor:pointer;">×</button>
+      <h3 style="margin-bottom:18px;">Активация промокода</h3>
+      <input id="promo-input" type="text" placeholder="Введите промокод" style="width:100%;font-size:18px;padding:8px 12px;border-radius:8px;border:1px solid #888;margin-bottom:12px;">
+      <button id="promo-activate-btn" style="font-size:18px;padding:8px 18px;border-radius:8px;width:100%;background:#ff9800;color:#fff;border:none;">Активировать</button>
+    </div>
+  </div>
+
+  <!-- Секция для инвентаря -->
+  <div id="inventory-area" style="display:none;max-width:350px;margin:0 auto;background:rgba(255,255,255,0.95);border-radius:16px;box-shadow:0 4px 24px rgba(30,144,255,0.10);padding:24px 10px 30px 10px;position:relative;text-align:center;">
+    <h2>Инвентарь</h2>
+    <div id="inventory-backgrounds" style="display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin:18px 0 24px 0;"></div>
+    <div id="inventory-message" style="font-size:18px;color:#1E90FF;"></div>
+    <button class="back-btn" id="inventory-back">Назад в меню</button>
+    <button class="back-btn" id="inventory-clear" style="background:#e53935;color:#fff;margin-left:10px;">Очистить инвентарь</button>
+  </div>
+
+  <!-- Кейс с фонами (fon.html) -->
+  <div id="background-case-area" style="display:none;">
+    <h2>🎰 Кейс с фонами</h2>
+    <div id="background-case-balance">Баланс: 0 монет</div>
+    <div id="background-case-price">Цена прокрута: 50 монет</div>
+    <div class="case-container">
+      <div class="case-line"></div>
+      <div class="items" id="background-case-items"></div>
+    </div>
+    <div id="background-case-result"></div>
+    <div class="button-container">
+      <button id="background-case-roll">Открыть кейс (50 монет)</button>
+    </div>
+    <button class="back-btn" id="background-case-back">Назад в меню</button>
+    <audio id="background-case-spinSound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_4fa51a9c66.mp3"></audio>
+    <audio id="background-case-winSound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_4d7f66d73a.mp3"></audio>
+  </div>
+
+  <!-- Секция для видео-казино (будет показана через JS) -->
+  <div id="kazino-video-area" style="display:none;max-width:320px;margin:auto;">
+    <h2>Казино подарки</h2>
+    <div class="balance" id="kazino-video-balanceDisplay">Баланс: 0 монет</div>
+    <div class="slot-container">
+      <div class="indicator"></div>
+      <div class="slot-strip" id="kazino-video-slotStrip"></div>
+    </div>
+    <button id="kazino-video-spinBtn">Крутить (70 монет)</button>
+    <button id="kazino-video-back">Назад в меню</button>
+    <div id="result-display"></div>
+  </div>
+
+  <!-- Секция для Казино подарки(Вип) (будет показана через JS) -->
+  <div id="kazik-vip-area" style="display:none;max-width:320px;margin:auto;">
+    <h2>Казино подарки (Вип)</h2>
+    <div class="balance" id="kazik-vip-balanceDisplay">Баланс: 0 монет</div>
+    <div class="slot-container">
+      <div class="indicator"></div>
+      <div class="slot-strip" id="kazik-vip-slotStrip"></div>
+    </div>
+    <button id="kazik-vip-spinBtn">Крутить (150 монет)</button>
+    <button id="kazik-vip-back">Назад в меню</button>
+    <div id="kazik-vip-result"></div>
+  </div>
+
+  <!-- Секция для Казино подарки(Премиум) (будет показана через JS) -->
+  <div id="kazik-premium-area" style="display:none;max-width:320px;margin:auto;">
+    <h2>Казино подарки (Премиум)</h2>
+    <div class="balance" id="kazik-premium-balanceDisplay">Баланс: 0 монет</div>
+    <div class="slot-container">
+      <div class="indicator"></div>
+      <div class="slot-strip" id="kazik-premium-slotStrip"></div>
+    </div>
+    <button id="kazik-premium-spinBtn">Крутить (250 монет)</button>
+    <button id="kazik-premium-back">Назад в меню</button>
+    <div id="kazik-premium-result"></div>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Кейс Казино</title>
+  <style>
+    body {
+      margin: 0;
+      background: #0a0e25;
+      color: #fff;
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      margin: 20px;
+    }
+
+    #balance {
+      font-size: 20px;
+      color: #0f0;
+    }
+
+    #price {
+      margin-bottom: 10px;
+      color: #aaa;
+    }
+
+    .case-container {
+      position: relative;
+      width: 800px;
+      height: 120px;
+      overflow: hidden;
+      background: rgba(0, 34, 68, 0.8);
+      border: 4px solid #0099ff;
+      border-radius: 10px;
+      margin-top: 20px;
+      box-shadow: 0 0 15px #00aaff;
+    }
+
+    .case-line {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 4px;
+      background: red;
+      z-index: 2;
+      transform: translateX(-50%);
+    }
+
+    .items {
+      display: flex;
+      transition: transform 0s;
+      will-change: transform;
+    }
+
+    .item {
+      flex: 0 0 120px;
+      height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 2px;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 16px;
+      color: white;
+      border: 2px solid #00ccff;
+      background: linear-gradient(to bottom, #3399ff, #2277cc);
+      box-sizing: border-box;
+    }
+
+    #result {
+      margin-top: 20px;
+      font-size: 20px;
+      color: yellow;
+      min-height: 24px;
+    }
+
+    .button-container {
+      margin-top: 20px;
+    }
+
+    button {
+      padding: 12px 24px;
+      background: #0077cc;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0 0 10px #005599;
+    }
+
+    button:hover {
+      background: #3399ff;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎰 Кейс Казино</h1>
+  <div id="balance">Баланс: 1000 монет</div>
+  <div id="price">Цена прокрута: 100 монет</div>
+
+  <div class="case-container">
+    <div class="case-line"></div>
+    <div class="items" id="items"></div>
+  </div>
+
+  <div id="result"></div>
+  <div class="button-container">
+    <button onclick="roll()">Открыть кейс</button>
+  </div>
+
+  <audio id="spinSound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_4fa51a9c66.mp3"></audio>
+  <audio id="winSound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_4d7f66d73a.mp3"></audio>
+
+  <script>
+    const itemsContainer = document.getElementById('items');
+    const resultDisplay = document.getElementById('result');
+    const balanceDisplay = document.getElementById('balance');
+    const spinSound = document.getElementById('spinSound');
+    const winSound = document.getElementById('winSound');
+    let balance = 1000;
+    let isRolling = false;
+
+    const dropChances = Array.from({ length: 30 }, (_, i) => 31 - i);
+
+    function generatePool() {
+      const pool = [];
+      dropChances.forEach((chance, index) => {
+        for (let i = 0; i < chance; i++) {
+          pool.push(index + 1);
+        }
+      });
+      return pool;
+    }
+
+    function getRandomItem() {
+      const pool = generatePool();
+      return pool[Math.floor(Math.random() * pool.length)];
+    }
+
+    const itemWidth = 124;
+
+    // Заполнить линию 30 случайными элементами при загрузке
+    function fillInitialItems() {
+      const initialItems = [];
+      for(let i = 0; i < 30; i++) {
+        initialItems.push(getRandomItem());
+      }
+      itemsContainer.innerHTML = '';
+      initialItems.forEach(num => {
+        const div = document.createElement('div');
+        div.className = "item";
+        div.innerText = `Фон ${num}`;
+        itemsContainer.appendChild(div);
+      });
+      // Сдвинуть так, чтобы было видно середину примерно
+      itemsContainer.style.transition = 'none';
+      itemsContainer.style.transform = `translateX(-${itemWidth * 7}px)`; 
+    }
+
+    function roll() {
+      if (isRolling) return;
+      if (balance < 100) {
+        resultDisplay.innerText = 'Недостаточно монет!';
+        return;
+      }
+
+      isRolling = true;
+      balance -= 100;
+      balanceDisplay.innerText = `Баланс: ${balance} монет`;
+      resultDisplay.innerText = '';
+
+      const preItems = 60;
+      const postItems = 10;
+
+      const allItems = [];
+      for (let i = 0; i < preItems; i++) {
+        allItems.push(getRandomItem());
+      }
+
+      const winItem = getRandomItem();
+      allItems.push(winItem);
+
+      for (let i = 0; i < postItems; i++) {
+        allItems.push(getRandomItem());
+      }
+
+      itemsContainer.innerHTML = '';
+      allItems.forEach(num => {
+        const div = document.createElement('div');
+        div.className = "item";
+        div.innerText = `Фон ${num}`;
+        itemsContainer.appendChild(div);
+      });
+
+      const winIndex = preItems;
+      const offset = winIndex * itemWidth - (400 - itemWidth / 2);
+
+      itemsContainer.style.transition = 'none';
+      itemsContainer.style.transform = 'translateX(0)';
+      void itemsContainer.offsetWidth;
+
+      spinSound.currentTime = 0;
+      spinSound.play();
+
+      setTimeout(() => {
+        itemsContainer.style.transition = 'transform 5s cubic-bezier(0.2, 1, 0.3, 1)';
+        itemsContainer.style.transform = `translateX(-${offset}px)`;
+      }, 50);
+
+      setTimeout(() => {
+        const selectedItem = itemsContainer.children[winIndex];
+        const text = selectedItem.innerText;
+        winSound.currentTime = 0;
+        winSound.play();
+        resultDisplay.innerText = `Выпало: ${text}`;
+        isRolling = false;
+      }, 5050);
+    }
+
+    // Заполнить сразу при загрузке
+    window.onload = () => {
+      fillInitialItems();
+    }
+  </script>
+</body>
+</html>
