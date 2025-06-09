@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Казино Видео Рулетка</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f0f4f8;
+    text-align: center;
+    padding: 20px;
+  }
+  #kazino-video-area {
+    max-width: 320px;
+    margin: auto;
+  }
+  .balance {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+  .slot-container {
+    position: relative;
+    width: 300px;
+    height: 100px;
+    margin: auto;
+    overflow: hidden;
+    border: 2px solid #333;
+    border-radius: 10px;
+    background: #222;
+  }
+  .indicator {
+    position: absolute;
+    top: 0;
+    left: 140px;
+    width: 20px;
+    height: 100px;
+    border-left: 4px solid red;
+    pointer-events: none;
+    z-index: 10;
+  }
+  .slot-strip {
+    display: flex;
+    height: 100px;
+    transition: transform 3.5s cubic-bezier(0.33, 1, 0.68, 1);
+  }
+  .slot-item {
+    flex: 0 0 100px;
+    height: 100px;
+    position: relative;
+    margin: 0;
+    box-sizing: border-box;
+  }
+  video {
+    width: 100px;
+    height: 100px;
+    border-radius: 10px;
+    object-fit: cover;
+    background: #000;
+    display: block;
+  }
+  .slot-text {
+    position: absolute;
+    bottom: 6px;
+    width: 100%;
+    color: #fff;
+    font-weight: bold;
+    text-shadow: 0 0 5px #000;
+    font-size: 14px;
+  }
+  button {
+    margin: 10px 5px;
+    padding: 10px 18px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+  }
+  #kazino-video-spinBtn {
+    background-color: #007bff;
+    color: white;
+  }
+  #kazino-video-back {
+    background-color: #777;
+    color: white;
+  }
+  #result-display {
+    margin-top: 10px;
+    font-size: 18px;
+    color: #333;
+    font-weight: bold;
+  }
+</style>
+</head>
+<body>
+
+<h1>Казино Видео Рулетка</h1>
+
+<div id="kazino-video-area" style="display:none;">
+  <div class="balance" id="kazino-video-balanceDisplay">Баланс: 0 монет</div>
+  <div class="slot-container">
+    <div class="indicator"></div>
+    <div class="slot-strip" id="kazino-video-slotStrip"></div>
+  </div>
+  <button id="kazino-video-spinBtn">Крутить (150 монет)</button>
+  <button id="kazino-video-back">Назад в меню</button>
+  <div id="result-display"></div>
+</div>
+
+<button id="start-casino">Запустить Казино Видео</button>
+
+<script>
+// Видеофайлы и награды
+const VIDEO_ITEMS = [
+  {src: 'korobka.mp4', text: '25%', coins: 25},
+  {src: 'posion.mp4', text: '30%', coins: 30},
+  {src: 'duxi.mp4', text: '20%', coins: 20},
+  {src: 'beer.mp4', text: '40%', coins: 40},
+  {src: 'pepe.mp4', text: '15%', coins: 15},
+];
+
+// Баланс
+function getTotalScore() {
+  return parseInt(localStorage.getItem('dravon_score') || '500', 10);
+}
+function setScore(n) {
+  localStorage.setItem('dravon_score', n);
+  updateScoreDisplay();
+}
+function addScore(n) {
+  setScore(getTotalScore() + n);
+}
+function updateScoreDisplay() {
+  const el = document.getElementById('kazino-video-balanceDisplay');
+  if (el) el.textContent = `Баланс: ${getTotalScore()} монет`;
+}
+
+function startKazinoVideo() {
+  document.getElementById('start-casino').style.display = 'none';
+  const area = document.getElementById('kazino-video-area');
+  area.style.display = 'block';
+
+  const slotStrip = document.getElementById('kazino-video-slotStrip');
+  const spinBtn = document.getElementById('kazino-video-spinBtn');
+  const backBtn = document.getElementById('kazino-video-back');
+  const resultDisplay = document.getElementById('result-display');
+  const spinCost = 150;
+  const itemWidth = 100;
+
+  const baseItems = Array.from({length: 50}, () => 
+    VIDEO_ITEMS[Math.floor(Math.random() * VIDEO_ITEMS.length)]
+  );
+  const repeatedItems = [...baseItems, ...baseItems, ...baseItems];
+
+  function renderStrip(items) {
+    slotStrip.innerHTML = '';
+    const fragment = document.createDocumentFragment();
+    items.forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'slot-item';
+      const video = document.createElement('video');
+      video.src = item.src;
+      video.muted = true;
+      video.loop = true;
+      video.playsInline = true;
+      video.preload = 'auto';
+      video.autoplay = true;
+      div.appendChild(video);
+
+      const textDiv = document.createElement('div');
+      textDiv.className = 'slot-text';
+      textDiv.textContent = item.text;
+      div.appendChild(textDiv);
+      fragment.appendChild(div);
+    });
+    slotStrip.appendChild(fragment);
+
+    // Принудительно прогружаем видео, чтобы убрать лаги
+    slotStrip.querySelectorAll('video').forEach(video => {
+      video.load();
+      video.play().catch(() => {});
+    });
+  }
+
+  renderStrip(repeatedItems);
+
+  let currentIndex = baseItems.length;
+  slotStrip.style.transition = 'none';
+  slotStrip.style.transform = `translateX(${-currentIndex * itemWidth + 150 - itemWidth / 2}px)`;
+  updateScoreDisplay();
+
+  let spinning = false;
+
+  spinBtn.onclick = function() {
+    if (spinning) return;
+    if (getTotalScore() < spinCost) {
+      resultDisplay.textContent = 'Недостаточно монет для прокрутки!';
+      return;
+    }
+    addScore(-spinCost);
+    spinning = true;
+    spinBtn.disabled = true;
+    resultDisplay.textContent = 'Крутим...';
+
+    const moveBy = Math.floor(20 + Math.random() * 10);
+    let targetIndex = currentIndex + moveBy;
+    const targetTranslateX = -targetIndex * itemWidth + 150 - itemWidth / 2;
+
+    slotStrip.style.transition = 'transform 3.5s cubic-bezier(0.33, 1, 0.68, 1)';
+    slotStrip.style.transform = `translateX(${targetTranslateX}px)`;
+
+    setTimeout(() => {
+      currentIndex = targetIndex;
+      if (currentIndex >= baseItems.length * 2) {
+        currentIndex -= baseItems.length;
+        slotStrip.style.transition = 'none';
+        const resetTranslateX = -currentIndex * itemWidth + 150 - itemWidth / 2;
+        slotStrip.style.transform = `translateX(${resetTranslateX}px)`;
+      }
+      const landedItem = repeatedItems[currentIndex];
+      if (landedItem?.src) {
+        addScore(landedItem.coins);
+        const fileName = landedItem.src.replace('.mp4', '');
+        resultDisplay.textContent = `Выпал: ${fileName} (${landedItem.text})`;
+      } else {
+        resultDisplay.textContent = 'Ошибка при определении приза.';
+      }
+      updateScoreDisplay();
+      spinning = false;
+      spinBtn.disabled = false;
+    }, 3500);
+  };
+
+  backBtn.onclick = function() {
+    area.style.display = 'none';
+    document.getElementById('start-casino').style.display = 'inline-block';
+  };
+}
+
+document.getElementById('start-casino').onclick = startKazinoVideo;
+</script>
+
+</body>
+</html>
